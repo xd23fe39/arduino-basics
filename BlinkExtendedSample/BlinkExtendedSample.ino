@@ -17,14 +17,14 @@ private:
   int value = LOW;
   int timer = 0;
 public:
-  Blink(int pin = BUILTIN_LED, int interval = 1500) {
-    this->ledPin = pin;
+  Blink() {
     this->timer = 0;
-    this->interval = interval;
     this->value = LOW;
   }
   
-  void setup() {
+  void setup(int pin, int interval = 1500) {
+    this->ledPin = pin;
+    this->interval = interval;
     pinMode(ledPin, OUTPUT);
   }
   
@@ -42,12 +42,12 @@ public:
   
 };
 
-Blink blink(BUILTIN_LED);
+Blink blink;
 
 // the setup routine runs once when you press reset:
 void setup() {                
   // initialize the digital pin as an output.
-  blink.setup();
+  blink.setup(BUILTIN_LED);
 }
 
 // the loop routine runs over and over again forever:
