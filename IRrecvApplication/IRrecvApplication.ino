@@ -78,7 +78,19 @@ public:
     }
    }
    
-   void receive(unsigned long code) {
+   virtual void receive(unsigned long code) {
+      switch (code) {
+      default:
+        Serial.println(" * Virtual method receive(...) is not implemented, yet [WARNING]");    
+        break; 
+      }
+   }
+   
+}; // END-of-class
+
+class IRKennwood : public IRReceiver {
+public:
+   virtual void receive(unsigned long code) {
       switch (code) {
       case KEY_PAD_001:
         Serial.println(" * Pushed KEY is 001 on your remote control!");    
@@ -88,14 +100,13 @@ public:
         break; 
       }
    }
-   
-}; // END-of-class
+};
 
 // ===================================================================
 // Arduino Main Functions
 // =================================================================== 
 
-IRReceiver ir;
+IRKennwood ir;
 
 /**
  * Initialisierung 
