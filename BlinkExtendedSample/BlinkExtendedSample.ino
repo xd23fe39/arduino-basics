@@ -1,8 +1,11 @@
 /*
-  Blink
-  Turns on an LED on for one second, then off for one second, repeatedly.
- 
-  This example code is in the public domain.
+  Blink Class Sample - working with classes and timer instead delay
+  
+  This sample is based on the Blink-Sample and demonstrates the benefit of
+  using classes. 
+  
+  https://github.com/xd23fe39/arduino-basics
+  
  */
 
 // ===================================================================
@@ -16,38 +19,51 @@
 // =================================================================== 
  
 /**
- * Defines a simple Component using a timer instead delay. 
+ * Defines a simple kind of component class using a timer instead delay. 
  */
 class Blink {
 private:
-  int ledPin;
-  int interval = 1500;
-  int value = LOW;
-  int timer = 0;
+  int ledPin;  // LED Pin number (Digital in/out)
+  int value = LOW;  // LED Pin value HIGH or LOW
+  int interval = 1500;  // toggle time period in ms 
+  int timer = 0; // loop counter
 public:
+  /**
+   * Constructor. Initialize some class attributes.
+   */
   Blink() {
     this->timer = 0;
     this->value = LOW;
   }
   
+  /**
+   * Setup-Method. 
+   */
   void setup(int pin, int interval = 1500) {
     this->ledPin = pin;
     this->interval = interval;
     pinMode(ledPin, OUTPUT);
   }
   
-  void toggle() {
-      value = ( value == HIGH ) ? LOW : HIGH;
-      digitalWrite(ledPin, value);
-  }
-  
-  void looper() {
+  /**
+   * Loop-Method. The loop method implement a loop counter (timer)
+   * and one or more counter-events. 
+   */
+  void loop() {
+    // call toggle() if counter reached the predefined interval.
     if ( ++timer >= interval ) {
-      timer = 0;
       toggle();
     }
   }
   
+  /**
+   * Toggle-Method toggle the digital pin between LOW and HIGH.
+   */
+  void toggle() {
+      this->value = ( this->value == HIGH ) ? LOW : HIGH;
+      this->timer = 0;
+      digitalWrite(ledPin, value);
+  }  
 };
 
 // ===================================================================
@@ -58,12 +74,14 @@ Blink blink;
 
 // the setup routine runs once when you press reset:
 void setup() {                
-  // initialize the digital pin as an output.
+  // initialize the object and setup a LED Pin number.
   blink.setup(BUILTIN_LED);
 }
 
 // the loop routine runs over and over again forever:
 void loop() {
-  blink.looper();
+  // call the loop-method of the object
+  blink.loop();
+  // wait for 1ms until next loop
   delay(1);
 }
