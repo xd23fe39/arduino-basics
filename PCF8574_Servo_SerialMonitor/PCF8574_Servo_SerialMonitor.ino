@@ -1,5 +1,7 @@
 /**
- * Demo: PCF8574 IO Erweiterungskarte I/O I2C-Bus Modul Leichtbau Expansion Board TE255
+ * Demo: setzt den Servo in Bewegung, wenn P4 oder P5 des Expanders mit GND verbunden sind.
+ *
+ * Baustein: PCF8574 IO Erweiterungskarte I/O I2C-Bus Modul Leichtbau Expansion Board TE255
  * The PCF8574 IO Expansion Board is an 8-bit remote I / O expander for I2C bus.
  * See also: http://www.nxp.com/documents/data_sheet/PCF8574.pdf
  *
@@ -32,18 +34,35 @@ uint8_t data = 0;      // 0xFF = alle PINs HIGH; 0xEF = P0 ist mit GND verbunden
 // Servo tool functions
 // =================================================================== 
 
-void servo_test(Servo* myservo) {
+// merke letzte Position
+int pos;
 
-  for(int pos = 40; pos < 140; pos += 1)  // goes from 0 degrees to 180 degrees 
-  {                                  // in steps of 1 degree 
-    myservo->write(pos);              // tell servo to go to position in variable 'pos' 
-    delay(15);                       // waits 15ms for the servo to reach the position 
+void servo_test(Servo* myservo, int min = 40, int max = 140 ) {
+
+  for(pos = min; pos < max; pos += 1) {                                  
+    myservo->write(pos);             
+    delay(15);                       
   } 
-  for(int pos = 140; pos>=40; pos-=1)     // goes from 180 degrees to 0 degrees 
-  {                                
-    myservo->write(pos);              // tell servo to go to position in variable 'pos' 
-    delay(15);                       // waits 15ms for the servo to reach the position 
-  } 
+  for(pos = max; pos>=min; pos-=1) {                                
+    myservo->write(pos);              
+    delay(15);                       
+  }
+} 
+
+void servo_start(Servo* myservo, int start = 90) {
+
+  if ( pos < start ) {
+    for(; pos < start; pos += 1) {                                  
+      myservo->write(pos);             
+      delay(15);                       
+    } 
+  }
+  if (pos > start) {
+    for(; pos > start; pos-=1) {                                
+      myservo->write(pos);              
+      delay(15);                       
+    }
+  }
 } 
 
 // ===================================================================
@@ -109,10 +128,12 @@ void loop()
     break;
   case 0xEF:
     Serial.println("PCF PIN: P4"); 
+    servo_start(&servos[0]);
     break;
   case 0xDF:
     Serial.println("PCF PIN: P5"); 
-    servo_test(&servos[0]);
+    servo_start(&servos[0], 40);
+    servo_test(&servos[0], 40, 180);
     break;
   case 0xBF:
     Serial.println("PCF PIN: P6"); 
