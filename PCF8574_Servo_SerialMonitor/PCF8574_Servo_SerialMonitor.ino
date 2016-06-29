@@ -17,14 +17,34 @@
  */
  
 #include <Wire.h>
+#include <Servo.h>
 
 // ===================================================================
 // Global variables
 // =================================================================== 
 
+Servo servos[1];
 int address = 0x38;    // 0x38 = Address Bits A2-A0: b000 
 int error = 0;         // error code
 uint8_t data = 0;      // 0xFF = alle PINs HIGH; 0xEF = P0 ist mit GND verbunden 
+
+// ===================================================================
+// Servo tool functions
+// =================================================================== 
+
+void servo_test(Servo* myservo) {
+
+  for(int pos = 40; pos < 140; pos += 1)  // goes from 0 degrees to 180 degrees 
+  {                                  // in steps of 1 degree 
+    myservo->write(pos);              // tell servo to go to position in variable 'pos' 
+    delay(15);                       // waits 15ms for the servo to reach the position 
+  } 
+  for(int pos = 140; pos>=40; pos-=1)     // goes from 180 degrees to 0 degrees 
+  {                                
+    myservo->write(pos);              // tell servo to go to position in variable 'pos' 
+    delay(15);                       // waits 15ms for the servo to reach the position 
+  } 
+} 
 
 // ===================================================================
 // Arduino Setup
@@ -40,8 +60,12 @@ void setup()
   Serial.println("Entering setup()-Function.");
   Serial.print("Current Date is: ");
   Serial.println(__DATE__);  
-  
+
+  // initialize i2c bus  
   Wire.begin(); // join i2c bus (address optional for master)
+
+  // initialize servos
+  servos[0].attach(9);  
 }
 
 // ===================================================================
@@ -88,6 +112,7 @@ void loop()
     break;
   case 0xDF:
     Serial.println("PCF PIN: P5"); 
+    servo_test(&servos[0]);
     break;
   case 0xBF:
     Serial.println("PCF PIN: P6"); 
