@@ -1,5 +1,6 @@
 /**
  * Demo: setzt den Servo in Bewegung, wenn P4 oder P5 des Expanders mit GND verbunden sind.
+ * Enthält zusätzlich eine IR Lichtschranke: Servo reagiert auf Unterbrechung.
  *
  * Baustein: PCF8574 IO Erweiterungskarte I/O I2C-Bus Modul Leichtbau Expansion Board TE255
  * The PCF8574 IO Expansion Board is an 8-bit remote I / O expander for I2C bus.
@@ -54,12 +55,18 @@
 // Global variables
 // =================================================================== 
 
+// Servos
 Servo servos[1];
+
+// IR
 IRrecv irrecv(PIN_IR_RECV);
 IRsend irsend;
+
+// i2c
 int address = 0x38;    // 0x38 = Address Bits A2-A0: b000 
 int error = 0;         // error code
 uint8_t data = 0;      // 0xFF = alle PINs HIGH; 0xEF = P0 ist mit GND verbunden 
+uint8_t i2c_back = 0;  // Save old i2c-data 
 
 // ===================================================================
 // Servo tool functions
@@ -132,7 +139,7 @@ void loop()
 {
   Wire.beginTransmission(address); // Beginne mit der Datenübertragung für Gerät (0x38)
                                 // device address is specified in datasheet
-  Wire.requestFrom(address, 1);                         
+  Wire.requestFrom(address, 1);  // request 1 byte from device on address                         
   if ( !Wire.available() ) {
 #if defined(SERIAL_DEBUG)
     Serial.print("Wire available: ");
@@ -141,12 +148,14 @@ void loop()
 #endif
   }
   
-  data = Wire.read();
+  i2c_back = data;    // save old i2c data
+  data = Wire.read(); // get new i2c data
 #if defined(SERIAL_DEBUG)
   Serial.print("Debug data: ");
   Serial.println(data, HEX);  
 #endif
 
+  if ( i2c_back != data )
   switch(data) {
   case 0xFF:
     Serial.println("All PCF Pins are not connected!"); 
@@ -188,6 +197,8 @@ void loop()
   
   int irrec = digitalRead(PIN_IR_RECV);
   if (irrec) {
+    Serial.print("  IR receiver read: ");
+    Serial.println(irrec);
     digitalWrite(PIN_BUILTIN_LED, irrec);
     servo_start(&servos[0], 60);
     servo_test(&servos[0], 60, 120);
