@@ -10,17 +10,33 @@
  *   7 bits: b0111AAA): 0x38 (if A2-A0 => b000)
  *
  * I2C am Arduino Nano:
- * VCC  -  5V
+ * Vcc  -  5V
  * GND  -  GND
  * SDA  -  A4
  * SCL  -  A5
  *
- * IR Components:
+ * http://wiring.org.co/reference/libraries/Wire/index.html
  *
- * Required:
+ * IR Receiver (VS1838B TL1838 1838 Infrared Receiver Head Universal IR Receiver 38kHz):
+ * OUT  -  D11
+ * GND  -  GND
+ * Vcc   -  5V
+ * 
+ * IR Diode:
+ * Vcc  -  D3  (Resistor: 100 Ohm erforderlich)
+ * GND  -  GND
+ *
+ * Micro Servo (SG90):
+ * GND   -  GND
+ * Vcc   -  5V
+ * PWM   -  PWM on Pins 3, 5, 6, 9, 10, and 11
+ *
+ * Required for IR:
  * http://z3t0.github.io/Arduino-IRremote/
  * https://github.com/z3t0/Arduino-IRremote
  *  
+ * LED: 13. There is a built-in LED connected to digital pin 13.
+ *
  * Created: 2016/06/28 Frank
  */
  
