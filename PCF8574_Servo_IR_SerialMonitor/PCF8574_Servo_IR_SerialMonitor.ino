@@ -45,11 +45,12 @@
 #include <Servo.h>
 #include <IRremote.h>
 
+#define PIN_IR_KHZ 38
 #define PIN_IR_RECV 11
-#define PIN_IR_SEND 3
+#define PIN_IR_SEND 3 
+
 #define PIN_BUILTIN_LED 13
 
-#define PIN_SEND_FREQ 38
 
 // ===================================================================
 // Global variables
@@ -60,7 +61,6 @@ Servo servos[1];
 
 // IR
 IRrecv irrecv(PIN_IR_RECV);
-IRsend irsend;
 
 // i2c
 int address = 0x38;    // 0x38 = Address Bits A2-A0: b000 
@@ -127,8 +127,8 @@ void setup()
   // Initialize IR 
   pinMode(PIN_IR_RECV, INPUT);
   pinMode(PIN_IR_SEND, OUTPUT);
-  irsend.enableIROut(PIN_SEND_FREQ);
-  irsend.mark(0);  
+  // irsend.enableIROut(PIN_SEND_FREQ);
+  // irsend.mark(0);  
 }
 
 // ===================================================================
@@ -178,8 +178,10 @@ void loop()
     break;
   case 0xDF:
     Serial.println("PCF PIN: P5"); 
+    digitalWrite(PIN_BUILTIN_LED, HIGH);
     servo_start(&servos[0], 40);
     servo_test(&servos[0], 40, 180);
+    digitalWrite(PIN_BUILTIN_LED, LOW);
     break;
   case 0xBF:
     Serial.println("PCF PIN: P6"); 
@@ -196,12 +198,13 @@ void loop()
   }
   
   int irrec = digitalRead(PIN_IR_RECV);
-  if (irrec) {
+  if (irrec && false) {
     Serial.print("  IR receiver read: ");
     Serial.println(irrec);
-    digitalWrite(PIN_BUILTIN_LED, irrec);
+    digitalWrite(PIN_BUILTIN_LED, HIGH);
     servo_start(&servos[0], 60);
     servo_test(&servos[0], 60, 120);
+    digitalWrite(PIN_BUILTIN_LED, LOW);
   }
 
   delay(1);

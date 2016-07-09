@@ -11,8 +11,12 @@
  */
  
 // Define your PIN layout here (macro constant)
-#define PIN_LED 12
-#define PIN_BTN 7
+#define PIN_LED 3
+#define PIN_BTN 4
+
+// needs 22 bytes more memory than a define constant
+// int PIN_LED=3;
+// int PIN_BTN=4;
 
 // global variable for writing button state
 int button_state;
@@ -34,15 +38,10 @@ void setup() {
 }
 
 void loop() {
-  // read the input pin and write and output result to
-  button_state = digitalRead(PIN_BTN);
+  // read on button pin 
+  button_state = digitalRead(PIN_BTN);  // return the button status HIGH or LOW
   Serial.println(button_state);
   
-  // switch LED on/off comparing button state
-  if (button_state == HIGH) {
-    digitalWrite(PIN_LED, HIGH);
-  }
-  else {
-    digitalWrite(PIN_LED, LOW);
-  }
+  // set LED PIN similar to button state
+  digitalWrite(PIN_LED, button_state);
 }
