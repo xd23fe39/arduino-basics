@@ -42,9 +42,11 @@ void setup() {
 // the loop routine runs over and over again forever:
 void loop() {
   digitalWrite(led, HIGH);   // turn the LED on (HIGH is the voltage level)
+  digitalWrite(3, HIGH);   
   Serial.print("|");
   delay(1000);               // wait for a second
   digitalWrite(led, LOW);    // turn the LED off by making the voltage LOW
+  digitalWrite(3, LOW);   
   Serial.print(".");
   delay(1000);               // wait for a second
   if (++lcnt % 10 == 0) Serial.println(lcnt);

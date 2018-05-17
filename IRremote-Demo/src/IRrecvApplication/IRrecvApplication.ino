@@ -113,6 +113,12 @@ IRKennwood ir;
  */
 void setup()
 {
+  pinMode(9, OUTPUT);     
+  pinMode(10, OUTPUT);     
+  digitalWrite(9, HIGH);   
+  digitalWrite(10, LOW);   
+
+  // PIN 11 ist der SIGNAL-PIN
   ir.setup(PIN_IR_RECEIVER);
 }
 
