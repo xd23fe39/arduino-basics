@@ -25,9 +25,12 @@
  */
 #define PIN_IR_RECEIVER  11
 
-#define KEY_PAD_001 0x6D92807F // Kenwood IR Remote Control Key 1
+#define KEY_ON 0x00F7C03F         // Kenwood IR Remote Control Key 1
+#define KEY_OFF 0x00F740BF        // Kenwood IR Remote Control Key 1
 
 #define null 0x0
+
+int merke = -1;
 
 // ===================================================================
 // Component Class: IRReceiver
@@ -78,6 +81,10 @@ public:
     }
    }
    
+  unsigned long getRecCode() {
+    return this->ir_code;
+  }
+
    virtual void receive(unsigned long code) {
       switch (code) {
       default:
@@ -92,8 +99,20 @@ class IRKennwood : public IRReceiver {
 public:
    virtual void receive(unsigned long code) {
       switch (code) {
-      case KEY_PAD_001:
-        Serial.println(" * Pushed KEY is 001 on your remote control!");    
+      case KEY_ON:
+        Serial.println(" * Pushed: ON!");    
+        digitalWrite(2, HIGH);
+        digitalWrite(3, LOW);
+        merke = HIGH;
+        break;
+      case KEY_OFF:
+        Serial.println(" * Pushed: OFF!");    
+        digitalWrite(2, LOW);
+        digitalWrite(3, HIGH);
+        if ( merke == LOW ) {
+          digitalWrite(3, LOW);
+        }
+        merke = LOW;
         break;
       default:
         Serial.println(" * Received unknown signal from your remote control [WARNING]");    
@@ -113,8 +132,12 @@ IRKennwood ir;
  */
 void setup()
 {
+  pinMode(2, OUTPUT);     // LED
+  pinMode(3, OUTPUT);     // LED
   pinMode(9, OUTPUT);     
   pinMode(10, OUTPUT);     
+  digitalWrite(2, LOW);   
+  digitalWrite(3, LOW);   
   digitalWrite(9, HIGH);   
   digitalWrite(10, LOW);   
 
