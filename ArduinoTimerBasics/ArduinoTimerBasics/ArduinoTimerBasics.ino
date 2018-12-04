@@ -17,9 +17,9 @@ const int analogOutPin = 9; // Analog output pin that the LED is attached to
 
 int sensorValue = 300;        // value between 0 (0V) and 500 (5V)
 int outputValue = 0;          // calculate it 0..255
-float shiftValue = 1.09;       // shift output 1.1 = +10%
+float shiftValue = 1.09;      // shift output 1.1 = +10%
 
-int  sleep = 20;
+int  sleep = 2;               // Loop Delay im ms
 unsigned long ticker = 0;
 unsigned long t_lap = 0;
 unsigned long t_now = 0;
