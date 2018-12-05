@@ -12,12 +12,20 @@ const int analogOutPin = 9; // Analog output pin that the LED is attached to
 
 int sensorValue = 300;        // value between 0 (0V) and 500 (5V)
 int outputValue = 0;          // calculate it 0..255
-float shiftValue = 0.8;       // shift output 1.1 = +10%
 
-int  sleep = 20;
-unsigned long ticker = 0;
-unsigned long t_lap = 0;
-unsigned long t_now = 0;
+int sleep = 20;
+
+struct timer {
+  unsigned long value;
+  unsigned long lap;
+  unsigned long now;  
+  unsigned long rotate;  
+  int sleep;
+  int rt_hour;
+  int rt_min;
+  int rt_sec;
+  int rt_milli;
+};
 
 /*
  * PWM Pins: 3, 5, 6, 9, 10, and 11.
@@ -29,49 +37,58 @@ struct ledSet {
   int fade;
   unsigned long tick;
   bool on;
+  int low;
 };
 
-ledSet laterne = {9, 300, 0, 2, 0, false};
-ledSet dorf = {10, 300, 0, 2, 0, false};
+timer worldtime = {0, 0, 0, 20, 0, 0, 0};
+ledSet laterne = {9, 300, 0, 2, 0, false, 100};
+ledSet dorf = {10, 300, 0, 2, 0, false, 25};
 
 void setup() {
   // initialize serial communications at 9600 bps:
   Serial.begin(9600);
 }
 
-void tick() {
-  Serial.print("ticker = ");
-  Serial.print(ticker);
+unsigned long tick(timer &t) {
+  t.lap = t.now;
+  t.now = millis();
+  t.rt_hour = int((t.lap / (60000 * 60))%24);
+  t.rt_min = int((t.lap / 60000) % 60);
+  t.rt_sec = int((t.lap / 1000 ) % 60);
+  t.rt_milli = int(t.lap % 1000);
+  t.rotate = int(t.lap / 1000 );
+  t.value += 1;
+  Serial.print("value = ");
+  Serial.print(t.value);
   Serial.print("\t ");
-  t_lap = t_now;
-  t_now = millis();
-  Serial.print("t_lap = ");
-  Serial.print(t_lap);
+  Serial.print("lap = ");
+  Serial.print(t.lap);
   Serial.print("\t ");  
-  Serial.print("t_now = ");
-  Serial.print(t_now);
+  Serial.print("now = ");
+  Serial.print(t.now);
   Serial.print("\t ");  
-  Serial.print(int(t_lap / 60000));
+  Serial.print(t.rt_hour);
+  Serial.print(" h ");
+  Serial.print(t.rt_min);
   Serial.print(" min ");
-  Serial.print(int(t_lap / 1000));
+  Serial.print(t.rt_sec);
   Serial.print(" sec ");
-  Serial.print(int(t_lap % 1000));
+  Serial.print(t.rt_milli);
   Serial.print(" milli.");
   Serial.print("\t ");
-  ticker += 1;
+  return t.value;
 }
 
-int update3VLED(int pin, int value) {
-  analogWrite(pin, map(value, 0, 500, 0, 255) * shiftValue);
-  
+int updateLED(ledSet &led) {
+  analogWrite(led.PIN, map(led.value, 0, 500, 0, 255));
+  return led.value;
 }
 
 int flackern(ledSet &led, int min, int max) {
   // map it to the range of the analog out:
   led.value = led.spannung - random(min, max); 
   led.tick++;
-  update3VLED(led.PIN, led.value);
-  return led.value;
+  return updateLED(led);
 }
 
 
@@ -83,27 +100,47 @@ int fadein(ledSet &led) {
   }
   else
     led.value += led.fade;
-  update3VLED(led.PIN, led.value);
-  return (int) led.value;
+  return updateLED(led);;
 }
 
+int fadeout(ledSet &led) {
+  led.tick++;
+  if (led.value - led.fade <= led.low ) {
+    led.value = led.low;
+    led.on = false;
+  }
+  else
+    led.value -= led.fade;
+  return updateLED(led);;
+}
+
+
 void loop() {
-  
+
+  // timer
+  tick(worldtime);
+
   // Laterne anschalten und flackern
   if ( laterne.on )
     flackern(laterne, 0, 120);
   else
     fadein(laterne);
 
-  // Dorf beleuchten
-  fadein(dorf);
-  
+  // Dorf beleuchten  
+  if (worldtime.rotate > 15)
+    fadeout(dorf);
+  else
+    fadein(dorf);  
+
+  // Debug Dorf LED Value
+  Serial.print("led = ");
+  Serial.print(dorf.value);
+  Serial.print("\t ");
+
   // print the results to the Serial Monitor:
   Serial.print("sensor = ");
   Serial.print(sensorValue);
   Serial.print("\t ");
-
-  tick();
   
   Serial.print("output = ");
   Serial.println(outputValue);
