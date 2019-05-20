@@ -73,11 +73,11 @@ class SignalLED {
     delay(200);
     digitalWrite(this->led_pin, LOW);
     delay(this->WAIT);
+    this->reset();
   }
 
   void reset() {
-    // ir_undefined = 0;
-    // counter = 1;      // 0 würde alive-LED auslösen, was nicht gewünscht ist
+    this->counter = 1;      // 0 würde alive-LED auslösen, was nicht gewünscht ist
   }
 
 };
