@@ -2,24 +2,27 @@ class AnalogReader {
 
 protected:
 
-    int PIN_SIG = A2;   // Analog-PIN zum auslesen
-    int PIN_GND = A0;   // Optional für GND
-    int PIN_VCC = A4;   // Optional für VCC
+    int PIN_SIG;   // Analog-PIN zum auslesen 
+    int PIN_GND;   // Optional für GND
+    int PIN_VCC;   // Optional für VCC
     int analog_in;
     int analog_merker;
 
 public:
 
-    void setup(int SIG, int VCC = 0, int GND = 0) {
-
+    AnalogReader(int SIG, int VCC = 0, int GND = 0) {
         PIN_SIG = SIG;
         PIN_VCC = VCC;
         PIN_GND = GND;
-        if (GND) {
+    }
+
+    void setup() {
+
+        if (PIN_GND) {
             pinMode(PIN_GND, OUTPUT);
             digitalWrite(PIN_GND, LOW);
         }
-        if (VCC) {
+        if (PIN_VCC) {
             pinMode(PIN_VCC, OUTPUT);
             digitalWrite(PIN_VCC, HIGH);
         }

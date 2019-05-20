@@ -6,13 +6,13 @@ unsigned long counter = 0;
 int analog_in = analogRead(A2), analog_merke;
 
 SignalLED signalLED(6,5);
-AnalogReader analogReader;
+AnalogReader analogReader(A2, A4, A0);
 
 void setup() {
   Serial.begin(9600);
 
   // Bauteil wird mit allen drei PINs in UNO eingesteckt
-  analogReader.setup(A2, A0, A4);
+  analogReader.setup();
 
   Serial.println("Analog Input Demo");
   signalLED.start();
