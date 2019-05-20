@@ -49,7 +49,7 @@ void setup() {
   // Initial IR in pin
   irrecv.enableIRIn();  
 
-  // First LED 'Hello' 
+  // Send a 'Hello' via LED :)
   signalLED.start();
 }
 
@@ -73,12 +73,12 @@ void loop() {
       break;
     case 16195807: case 1838295255:
       Serial.println("IR receive: RED Button pusched.");
-      signalLED.blink(2, 300);
+      signalLED.blink(2);
       reset();
       break;
     case 16228447: case 1838327895:
       Serial.println("IR receive: GREEN Button pusched.");
-      signalLED.blink(3, 300);
+      signalLED.blink(3);
       reset();
       break;
     case 1838336055: 

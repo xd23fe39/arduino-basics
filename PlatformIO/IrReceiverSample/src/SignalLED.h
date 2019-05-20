@@ -29,14 +29,15 @@ class SignalLED {
       digitalWrite(pin_led, LOW);
     }
 
-    void blink(int cnt, int rate = 500) {
+    // Lässt die LED cnt-Mal blinken
+    void blink(int cnt, int ms = 300) {
       digitalWrite(this->led_pin, LOW);
       delay(this->LATENCY);
       for (int i = 0; i < cnt; i++) {
         digitalWrite(this->led_pin, HIGH);
-        delay(rate);
+        delay(ms);
         digitalWrite(this->led_pin, LOW);
-        delay(rate);
+        delay(ms);
       }
     }
 
@@ -47,8 +48,13 @@ class SignalLED {
     this->blink(cnt, rate);
   }
 
-  void alive(int divisor = 20, int ms = 20) {
-    if (this->counter % divisor == 0) {
+  /**
+   * Lässt die LED alle ticks lang kurz blinken.
+   * 
+   * alive() wird in loop() aufgerufen.
+   */
+  void alive(int tick = 20, int ms = 20) {
+    if (this->counter % tick == 0) {
       digitalWrite(this->led_pin, LOW);
       delay(this->LATENCY);
       digitalWrite(this->led_pin, HIGH);
