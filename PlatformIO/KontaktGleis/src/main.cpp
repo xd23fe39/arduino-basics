@@ -1,61 +1,39 @@
 #include <Arduino.h>
 #include <SignalLED.h>
+#include <Kontaktschalter.h>
 
-class Kontaktschaltung {
+const uint8_t PIN_LED_VCC = 6;
+const uint8_t PIN_LED_GND = 5;
+const uint8_t PIN_BTN_SIG = 7;
 
-protected:
-
-  SignalLED *signalLED;
-
-  // Counter
-  unsigned counter = 0;
-
-  // PIN Layout
-  uint8_t pin_sig = 7;
-
-public:
-
-  Kontaktschaltung(SignalLED *signalLED = NULL) {
-    this->signalLED = signalLED;
-  }
-
-  ~Kontaktschaltung() {
-    free(signalLED);
-  }
-
-  void init() {
-  }
-
-  boolean read() {
-    return digitalRead(pin_sig);    
-  }
-
-  void alive() {
-    if (read() == HIGH) {
-      if ( signalLED )
-        signalLED->blink(1, 500);
-      counter = 0;
-    }
-
-    // Zähler
-    counter++;
-  }
-
-};
-
-SignalLED signalLED(6,5);
-Kontaktschaltung schalter(&signalLED);
+SignalLED signalLED(PIN_LED_VCC, PIN_LED_GND);
+Kontaktschalter schalter(PIN_BTN_SIG);
 
 void setup() {
+  // Serial Monitor
   Serial.begin(9600);
+
+  // Initialize
   schalter.init();
   signalLED.start();
+
+  // Ende von Setup melden
+  Serial.println("Kontaktschalter bereit.");
 }
 
 void loop() {
-  schalter.alive();
+  // LED alive blink signal
   signalLED.alive();
+  
+  // Kontaktschalter abfragen und auslösen
+  if ( schalter.alive() == HIGH ) {
+    // Auslöseanzeige über Serial Monitor
+    Serial.print("Kontaktschalter: ");
+    Serial.println(schalter.getState());
+    // Blinksignal ausgeben
+    signalLED.blink(1, 500);    // Leuchtdauer 500ms
+  }
 
-  // Warte 100ms
+  // Wartezyklus 100ms
   delay(100);
 }
