@@ -6,6 +6,7 @@ protected:
 
   // Counter
   unsigned counter = 0;
+  unsigned pushed = 0;
 
   // PIN Layout
   uint8_t pin_sig = 7;
@@ -35,19 +36,25 @@ public:
   int alive() {
     state = read();
     if (state == HIGH) {
-      if ( signalLED )
-        signalLED->blink(1, 500);
-      counter = 0;
+      counter++;
+      if (counter == 1) pushed++;
     }
-
-    // Zähler
-    counter++;
+    else
+        counter = 0;      // Zähler nullen
 
     return state;
   }
 
   int getState() {
     return state;
+  }
+
+  int getCounter() {
+    return counter;
+  }
+
+  int getPushed() {
+    return pushed;
   }
 
 };

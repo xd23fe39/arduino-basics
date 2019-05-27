@@ -18,7 +18,7 @@ void setup() {
   signalLED.start();
 
   // Ende von Setup melden
-  Serial.println("Kontaktschalter bereit.");
+  Serial.println("\nKontaktschalter bereit.\n");
 }
 
 void loop() {
@@ -29,9 +29,15 @@ void loop() {
   if ( schalter.alive() == HIGH ) {
     // Auslöseanzeige über Serial Monitor
     Serial.print("Kontaktschalter: ");
-    Serial.println(schalter.getState());
+    Serial.print(" | Pushed: ");
+    Serial.print(schalter.getPushed());
+    Serial.print(" Zähler: ");
+    Serial.print(schalter.getCounter());
+    Serial.print(" | Zustand: ");
+    Serial.print(schalter.getState());
+    Serial.println(" #");
     // Blinksignal ausgeben
-    signalLED.blink(1, 500);    // Leuchtdauer 500ms
+    signalLED.blink(1, 100);    // Leuchtdauer 100ms
   }
 
   // Wartezyklus 100ms
