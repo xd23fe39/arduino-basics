@@ -31,7 +31,7 @@ void loop() {
     Serial.print("Kontaktschalter: ");
     Serial.print(" | Pushed: ");
     Serial.print(schalter.getPushed());
-    Serial.print(" Zähler: ");
+    Serial.print(" | Zähler: ");
     Serial.print(schalter.getCounter());
     Serial.print(" | Zustand: ");
     Serial.print(schalter.getState());
