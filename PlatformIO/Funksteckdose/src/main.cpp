@@ -1,3 +1,10 @@
+/*
+ *
+ * 
+ * https://funduino.de/nr-03-433mhz-funkverbindung
+ * 
+ */
+
 #include <Arduino.h>
 #include <RCSwitch.h>
 #include <output.h>
@@ -18,6 +25,8 @@ public:
   void init() {
     Serial.begin(9600);
     rcswitch.enableReceive(0);  // Receiver on interrupt 0 => that is pin #2
+    Serial.print("\nRCSwitch Funkmodul Testprogramm\n");
+    Serial.println();
   }
 
   void monitor() {
@@ -51,6 +60,7 @@ void setup() {
 
 void loop() {
   funk.monitor();
+  delay(10);
 }
 
 /*
