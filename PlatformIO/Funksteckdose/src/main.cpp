@@ -11,6 +11,7 @@
 #include <output.h>
 
 // #define DEBUG
+#define DEBUG_DETAIL
 
 struct AnalogSensor {
   uint8_t pin;
@@ -145,8 +146,6 @@ public:
     delay(10000);
   }
 
-
-
   void monitor() {
     if (rcmonitor.available()) {
       rcvalue = rcmonitor.getReceivedValue();
@@ -159,7 +158,7 @@ public:
       Serial.print(rcvalue);
       Serial.print(", Binary ");
       Serial.println(*rcrawdata, BIN);
-#ifdef DEBUG_DETAILS
+#ifdef DEBUG_DETAIL
       output(rcvalue, rcbitlen, rcdelay, rcrawdata,rcprot);
 #endif
       rcmonitor.resetAvailable();
@@ -198,10 +197,22 @@ void loop() {
   rcmodul.loop();
   rcmodul.readSensor();
   if (rcmodul.wait(10000) && rcmodul.releaseSensor()) {
-    if (rcmodul.getSensorValue() < 512) 
-      rcmodul.sendData("010100000101000101010100");
-    else      
-      rcmodul.sendData("010100000101000101010001");
+    if (rcmodul.getSensorValue() < 256) {
+      rcmodul.sendData("010100000100010101010100");     // A_OFF
+      rcmodul.sendData("010100000101000101010100");     // B_OFF
+    }
+    else if (rcmodul.getSensorValue() < 512) {
+      rcmodul.sendData("010100000100010101010001");     // A_ON
+      rcmodul.sendData("010100000101000101010100");     // B_OFF
+    }
+    else if (rcmodul.getSensorValue() < 768) {
+      rcmodul.sendData("010100000101000101010001");     // B_ON
+      rcmodul.sendData("010100000100010101010001");     // A_ON
+    }
+    else { 
+      rcmodul.sendData("010100000101000101010001");     // B_ON
+      rcmodul.sendData("010100000100010101010100");     // A_OFF
+    }
     rcmodul.alive();
   }
   rcmodul.monitor();
