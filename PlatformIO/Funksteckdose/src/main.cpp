@@ -11,7 +11,7 @@
 #include <output.h>
 
 // #define DEBUG
-#define DEBUG_DETAIL
+// #define DEBUG_DETAIL
 
 struct AnalogSensor {
   uint8_t pin;
