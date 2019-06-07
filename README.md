@@ -26,14 +26,19 @@ sudo usermod -a -G dialout $USER
 sudo chmod g+rw /dev/ttyUSB0
 ``` 
 
-## Installation
+## Download und Installation
 
-Download und Installation:   
+Als IDE wird PlatformIO (Erweiterung in VSCode) und ArduinoIDE genutzt. 
+
+Download:
 
     sudo mkdir -p /opt/arduino-ide/available
     sudo mv arduino-1.8.9-linux64.tar.xz /opt/arduino-ide/available
-    cd /opt/arduino-ide/available/arduino-1.8.9
     sudo tar -xvf arduino-1.8.9-linux64.tar.xz 
+
+Installation:
+
+    cd /opt/arduino-ide/available/arduino-1.8.9
     sudo ./install.sh 
 
 Installation prüfen:
