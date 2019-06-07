@@ -20,6 +20,7 @@ unsigned long pc_start = millis();
 struct PIRSensor_T {
    unsigned long timer;
    int value;
+   long counter;
 };
 
 PIRSensor_T pir1;
@@ -33,6 +34,7 @@ PIRSensor_T pir1;
    pinMode(PIN4, INPUT);
    pir1.timer = millis() - pc_start;
    pir1.value = digitalRead(PIN4);
+   pir1.counter = 0;
 
    u8g2.begin();
 
@@ -73,32 +75,40 @@ PIRSensor_T pir1;
 
   void loop(void) {
 
-   digitalWrite(LED_BUILTIN, HIGH);
    u8g2.clearBuffer();					// clear the internal memory
-   u8g2.drawHLine(14,18,100);
+   u8g2.setFont(u8g2_font_logisoso16_tr);  // choose a suitable font at https://github.com/olikraus/u8g2/wiki/fntlistall
+   u8g2.drawHLine(14,2,100);
+   u8g2.drawStr(14,26,"Scanning...");  // write something to the internal memory
    u8g2.sendBuffer();					// transfer internal memory to the display
    delay(1000);
-   digitalWrite(LED_BUILTIN, LOW);
 
    pir1.timer = millis() - pc_start;
-   pir1.value = digitalRead(PIN4);
-   char pir_display[12];
-   sprintf(pir_display, "%d PIR", pir1.value);
-   u8g2.clearBuffer();         // clear the internal memory
-   u8g2.setFont(u8g2_font_logisoso16_tr);  // choose a suitable font at https://github.com/olikraus/u8g2/wiki/fntlistall
-   u8g2.drawStr(10,26,pir_display);  // write something to the internal memory
-   u8g2.sendBuffer();         // transfer internal memory to the display
-   delay(2000);
+   
+   int pir_in = digitalRead(PIN4);
+   if (pir_in == HIGH && pir1.value == LOW) {
+      digitalWrite(LED_BUILTIN, HIGH);
+      pir1.counter++;
 
-   char pc_display[12];
-   sprintf(pc_display, "%ld ms", (unsigned long) millis() - pc_start);
+      char pc_display[12];
+      sprintf(pc_display, "T: %ld ms", (unsigned long) millis() - pc_start);
+      u8g2.clearBuffer();         // clear the internal memory
+      u8g2.setFont(u8g2_font_7x14_tr);  // choose a suitable font at https://github.com/olikraus/u8g2/wiki/fntlistall
+      u8g2.drawStr(6,16,"Detected!");  // write something to the internal memory
+      u8g2.drawStr(6,30,pc_display);  // write something to the internal memory
+      u8g2.sendBuffer();         // transfer internal memory to the display
+      delay(2000);
+      digitalWrite(LED_BUILTIN, LOW);
+   }
+   pir1.value = pir_in;
+   char pir_display[12];
+   sprintf(pir_display, "PIR: %ld (%d)", pir1.counter, pir_in);
    u8g2.clearBuffer();         // clear the internal memory
    u8g2.setFont(u8g2_font_logisoso16_tr);  // choose a suitable font at https://github.com/olikraus/u8g2/wiki/fntlistall
-   u8g2.drawStr(10,26,pc_display);  // write something to the internal memory
+   u8g2.drawStr(6,26,pir_display);  // write something to the internal memory
    u8g2.sendBuffer();         // transfer internal memory to the display
    delay(2000);
    
-   double vcc_value = 3.3;
+   double vcc_value = map(analogRead(PIN_A2), 0, 1023, 0, 5);
    String vcc_str = ((vcc_value >=0) ? "+" : "-") + String(vcc_value) + " V";
    char vcc_buf[10];
    vcc_str.toCharArray(vcc_buf, 10);
@@ -106,6 +116,11 @@ PIRSensor_T pir1;
    u8g2.setFont(u8g2_font_logisoso24_tr);  // choose a suitable font at https://github.com/olikraus/u8g2/wiki/fntlistall
    u8g2.drawStr(18,30,vcc_buf);	// write something to the internal memory
    u8g2.sendBuffer();					// transfer internal memory to the display
-   delay(2000);
-   
+   delay(500);
+
+   // Alive   
+   digitalWrite(LED_BUILTIN, HIGH);
+   delay(20);
+   digitalWrite(LED_BUILTIN, LOW);
+   delay(20);
 }
