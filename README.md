@@ -26,3 +26,17 @@ sudo usermod -a -G dialout $USER
 sudo chmod g+rw /dev/ttyUSB0
 ``` 
 
+## Installation
+
+Download und Installation:   
+
+    sudo mkdir -p /opt/arduino-ide/available
+    sudo mv arduino-1.8.9-linux64.tar.xz /opt/arduino-ide/available
+    cd /opt/arduino-ide/available/arduino-1.8.9
+    sudo tar -xvf arduino-1.8.9-linux64.tar.xz 
+    sudo ./install.sh 
+
+Installation prüfen:
+
+    ls -la /usr/local/bin/arduino
+ 
