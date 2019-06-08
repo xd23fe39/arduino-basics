@@ -56,10 +56,18 @@ void setup(void) {
 #endif
 }
 
-void loop(void) {
+   void loop(void) {
 
-   char pc_display[12];
-   sprintf(pc_display, "T: %ld ms", (unsigned long) millis() - pc_start);
+   // Reserviere 25 Zeichen für die Ausgabe des Timers
+   char pc_display[25];
+
+   // Berechne die Timer-Werte aus den vergangenen Millisekunden (alle 60 Sekunden von vorne)
+   unsigned long timer =  (unsigned long) (millis() - pc_start) ;
+
+   // Formatiere die Ausgabe und schreibe in Char-Buffer
+   sprintf(pc_display, "T: %ld ms", timer);
+
+   // Ausgabe der Timer-Page auf dem Dispplay
    u8g2.clearBuffer();         // clear the internal memory
    u8g2.setFont(u8g2_font_6x12_tr);  // choose a suitable font at https://github.com/olikraus/u8g2/wiki/fntlistall
    u8g2.drawStr(34,12,"T I M E R");  // write something to the internal memory
