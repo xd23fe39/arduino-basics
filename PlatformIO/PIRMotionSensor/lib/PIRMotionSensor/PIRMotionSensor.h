@@ -14,6 +14,14 @@ protected:
   // Zählt die Bewegungsalarme
   int counter;
 
+  // Zeit bis zum Zurücksetzen des Alert-Status (Lock-Timer)
+  unsigned long lc_timer;
+  unsigned long lc_start;
+  unsigned long lc_stop;
+
+  // Auslesen des Daten-PIN
+  int readSignal();
+
 public:
 
   const int MOTION_ALERT = HIGH;
@@ -26,6 +34,6 @@ public:
   int detect(int mode = 0);
   void reset();
   bool locked();
-
+  unsigned long getLockTimer();
 };
 #endif
