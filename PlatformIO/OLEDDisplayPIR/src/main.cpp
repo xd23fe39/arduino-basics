@@ -79,6 +79,7 @@ PIRSensor_T pir1;
    
    int pir_in = digitalRead(PIN4);
    if (pir_in == HIGH && pir1.value == LOW) {
+      digitalWrite(LED_BUILTIN, HIGH);
       pir1.value = pir_in;
       pir1.counter++;
 
@@ -86,7 +87,7 @@ PIRSensor_T pir1;
       sprintf(pc_display, "T: %ld ms", (unsigned long) millis() - pc_start);
       u8g2.clearBuffer();         // clear the internal memory
       u8g2.setFont(u8g2_font_7x14_tr);  // choose a suitable font at https://github.com/olikraus/u8g2/wiki/fntlistall
-      u8g2.drawStr(6,16,"Detected!");  // write something to the internal memory
+      u8g2.drawStr(6,16,"Motion ALERT!");  // write something to the internal memory
       u8g2.drawStr(6,30,pc_display);  // write something to the internal memory
       u8g2.sendBuffer();         // transfer internal memory to the display
       delay(5000);
