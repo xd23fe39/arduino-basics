@@ -11,7 +11,7 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   if ( pir.detect() ) {
-    for (int i = 0; i <= 3; i++) { 
+    while (pir.locked()) { 
       digitalWrite(LED_BUILTIN, HIGH);
       delay(500);
       digitalWrite(LED_BUILTIN, LOW);

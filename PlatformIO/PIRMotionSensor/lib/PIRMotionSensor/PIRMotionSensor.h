@@ -25,6 +25,7 @@ public:
   void setup();
   int detect(int mode = 0);
   void reset();
+  bool locked();
 
 };
 #endif
