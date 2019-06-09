@@ -11,7 +11,7 @@ https://www.instructables.com/id/Tutorial-to-Interface-OLED-091inch-128x32-With-
 
 */
 
-// Display Controller: SSD1306
+// Display Controller: SSD1306 von DSDTech.
 U8G2_SSD1306_128X32_UNIVISION_F_HW_I2C u8g2(U8G2_R0); 
 
 // Sample usage 
@@ -52,10 +52,10 @@ PIRSensor_T pir1;
    delay(2000);
 
    char clock[10];
-   sprintf(clock, "%.10d", (int) u8g2.getBusClock());
+   sprintf(clock, "%d", (int) u8g2.getBusClock());
    u8g2.clearBuffer();         // clear the internal memory
    u8g2.setFont(u8g2_font_logisoso16_tr);  // choose a suitable font at https://github.com/olikraus/u8g2/wiki/fntlistall
-   u8g2.drawStr(10,29,clock);  // write something to the internal memory
+   u8g2.drawStr(22,29,clock);  // write something to the internal memory
    u8g2.sendBuffer();         // transfer internal memory to the display
    delay(2000);
 
@@ -79,7 +79,7 @@ PIRSensor_T pir1;
    
    int pir_in = digitalRead(PIN4);
    if (pir_in == HIGH && pir1.value == LOW) {
-      digitalWrite(LED_BUILTIN, HIGH);
+      pir1.value = pir_in;
       pir1.counter++;
 
       char pc_display[12];
@@ -89,17 +89,20 @@ PIRSensor_T pir1;
       u8g2.drawStr(6,16,"Detected!");  // write something to the internal memory
       u8g2.drawStr(6,30,pc_display);  // write something to the internal memory
       u8g2.sendBuffer();         // transfer internal memory to the display
-      delay(2000);
+      delay(5000);
       digitalWrite(LED_BUILTIN, LOW);
    }
-   pir1.value = pir_in;
-   char pir_display[12];
-   sprintf(pir_display, "PIR: %ld (%d)", pir1.counter, pir_in);
-   u8g2.clearBuffer();         // clear the internal memory
-   u8g2.setFont(u8g2_font_logisoso16_tr);  // choose a suitable font at https://github.com/olikraus/u8g2/wiki/fntlistall
-   u8g2.drawStr(6,26,pir_display);  // write something to the internal memory
-   u8g2.sendBuffer();         // transfer internal memory to the display
-   delay(200);
+
+   if (pir_in == LOW && pir1.value == HIGH) {
+      pir1.value = pir_in;      
+
+      char pir_display[12];
+      sprintf(pir_display, "PIR: %ld (%d)", pir1.counter, pir_in);
+      u8g2.clearBuffer();         // clear the internal memory
+      u8g2.setFont(u8g2_font_logisoso16_tr);  // choose a suitable font at https://github.com/olikraus/u8g2/wiki/fntlistall
+      u8g2.drawStr(6,26,pir_display);  // write something to the internal memory
+      u8g2.sendBuffer();         // transfer internal memory to the display
+   }
 
 #ifdef ANALOG   
    double vcc_value = map(analogRead(PIN_A2), 0, 1023, 0, 5);
@@ -119,4 +122,5 @@ PIRSensor_T pir1;
    digitalWrite(LED_BUILTIN, LOW);
    delay(20);
 #endif
+
 }
