@@ -39,6 +39,33 @@ U8G2_SSD1306_128X32_UNIVISION_F_HW_I2C u8g2(U8G2_R0);
 
 // Programmstart Timerdaten holen 
 unsigned long pc_start = millis();
+unsigned long pc_timer = 0;
+int pc_sec = 0;
+int pc_mil = 0;
+
+// Reserviere 25 Zeichen für die Ausgabe des Timers
+char pc_display[25] = "";
+
+void reset()  {
+   pc_timer = 0;
+   pc_start = millis();
+}
+
+void display(int sec, int mil) {
+     // Formatiere die Ausgabe und schreibe in Char-Buffer
+      // sprintf(pc_display, "T: %ld ms", timer);
+      sprintf(pc_display, "%d.%.3d ms", sec, mil);
+
+      // Ausgabe der Timer-Page auf dem Dispplay
+      u8g2.clearBuffer();                 // clear the internal memory
+      u8g2.setFont(u8g2_font_6x12_tr);    // choose a suitable font at https://github.com/olikraus/u8g2/wiki/fntlistall
+      u8g2.drawStr(34,12,"T I M E R");    // write something to the internal memory
+      u8g2.drawHLine(4,15,120);           // draw a horizontal line
+      // u8g2.setFont(u8g2_font_7x14_tr); // choose a suitable font at https://github.com/olikraus/u8g2/wiki/fntlistall
+      u8g2.setFont(u8g2_font_9x15_tr);    // choose a suitable font at https://github.com/olikraus/u8g2/wiki/fntlistall
+      u8g2.drawStr(18,32,pc_display);      // write something to the internal memory
+      u8g2.sendBuffer();                  // transfer internal memory to the display   
+}
 
 // MAIN setup()-Funktion
 void setup(void) {
@@ -80,28 +107,18 @@ void setup(void) {
    u8g2.sendBuffer();         // transfer internal memory to the display
    delay(2000);
 #endif
+
+   reset();
 }
 
 // MAIN loop()-Funktion 
 void loop(void) {
 
-   // Reserviere 25 Zeichen für die Ausgabe des Timers
-   char pc_display[25];
+   pc_timer = millis() - pc_start;
 
-   // Berechne die Timer-Werte aus den vergangenen Millisekunden (alle 60 Sekunden von vorne)
-   unsigned long timer =  (unsigned long) (millis() - pc_start) ;
+   pc_sec = pc_timer / 1000;
+   pc_mil = pc_timer % 1000;
 
-   // Formatiere die Ausgabe und schreibe in Char-Buffer
-   sprintf(pc_display, "T: xd%ld ms", timer);
-
-   // Ausgabe der Timer-Page auf dem Dispplay
-   u8g2.clearBuffer();                 // clear the internal memory
-   u8g2.setFont(u8g2_font_6x12_tr);    // choose a suitable font at https://github.com/olikraus/u8g2/wiki/fntlistall
-   u8g2.drawStr(34,12,"T I M E R");    // write something to the internal memory
-   u8g2.drawHLine(4,15,120);           // draw a horizontal line
-   // u8g2.setFont(u8g2_font_7x14_tr); // choose a suitable font at https://github.com/olikraus/u8g2/wiki/fntlistall
-   u8g2.setFont(u8g2_font_9x15_tr);    // choose a suitable font at https://github.com/olikraus/u8g2/wiki/fntlistall
-   u8g2.drawStr(6,32,pc_display);      // write something to the internal memory
-   u8g2.sendBuffer();                  // transfer internal memory to the display
-   delay(200);
+   if (pc_mil % 12 == 0)
+      display(pc_sec, pc_mil);
 }
