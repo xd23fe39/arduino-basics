@@ -26,6 +26,11 @@ sudo usermod -a -G dialout $USER
 sudo chmod g+rw /dev/ttyUSB0
 ``` 
 
+## Troubleshooting 
+
+http://docs.platformio.org/en/latest/faq.html#platformio-udev-rules
+
+
 ## Download und Installation
 
 Als IDE wird PlatformIO (Erweiterung in VSCode) und ArduinoIDE genutzt. 
