@@ -10,33 +10,24 @@ void PIRMotionSensor_C::setup() {
   this->reset();  
 }
   
-int PIRMotionSensor_C::detect(int mode = 0) {
+int PIRMotionSensor_C::detect() {
   int in = readSignal();
-  // PIR wechselt in den Alert-Modus (Alert setzen)
+  // PIR erkennt Bewegung => MOTION_ALERT
   if ( this->value == MOTION_SLEEP && in == PIR_ALERT_SIGNAL ) {
     this->value = MOTION_ALERT;    // Save motion alert 
     this->counter++;            // Detection counter
     this->lc_start = millis();
-    if (mode == 0) {
-      return MOTION_ALERT;
-    }
+    return 2;
   }
-  // PIR wechselt wieder in den Sleep-Modus (Alert löschen)
+  // PIR Lock wird wieder aufgehoben => MOTION_SLEEP
   if ( this->value == MOTION_ALERT && in == PIR_SLEEP_SIGNAL ) {
     this->value = MOTION_SLEEP;
     this->lc_stop = millis();
     this->lc_timer = lc_stop - lc_start;
+    return 1;
   }
-  if ( this->value == in ) {
-    // Nothing is changed...
-  }
-  if (mode == 0) {
-    return MOTION_SLEEP;
-  }
-  else {
-    return this->value;
-  }
-  
+  // Keine Änderung erkannt
+  return 0;  
 }
 
 bool PIRMotionSensor_C::locked() {
@@ -46,6 +37,10 @@ bool PIRMotionSensor_C::locked() {
 
 unsigned long PIRMotionSensor_C::getLockTimer() {
   return this->lc_timer;
+}
+
+int PIRMotionSensor_C::getAlerts() {
+  return this->counter;
 }
 
 void PIRMotionSensor_C::reset()  {

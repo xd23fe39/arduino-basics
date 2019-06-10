@@ -19,9 +19,6 @@ protected:
   unsigned long lc_start;
   unsigned long lc_stop;
 
-  // Auslesen des Daten-PIN
-  int readSignal();
-
 public:
 
   const int MOTION_ALERT = HIGH;
@@ -31,9 +28,11 @@ public:
 
   PIRMotionSensor_C(int pin_sig);
   void setup();
-  int detect(int mode = 0);
+  int detect();
   void reset();
   bool locked();
   unsigned long getLockTimer();
+  int getAlerts();
+  int readSignal();
 };
 #endif
