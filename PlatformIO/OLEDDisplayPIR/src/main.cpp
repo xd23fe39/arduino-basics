@@ -3,8 +3,11 @@
 #include <SPI.h>
 #include <Wire.h>
 #include "PIRMotionSensor.h"
+#include "OLEDText.h"
 
 #define LOGO "ON"
+
+extern U8G2_SSD1306_128X32_UNIVISION_F_HW_I2C u8g2;
 
 /*
 
@@ -12,11 +15,10 @@ https://www.instructables.com/id/Tutorial-to-Interface-OLED-091inch-128x32-With-
 
 */
 
-// Display Controller: SSD1306 von DSDTech.
-U8G2_SSD1306_128X32_UNIVISION_F_HW_I2C u8g2(U8G2_R0); 
-
 // PIR Motion Sensor Helper Class
 PIRMotionSensor_C pir(PIN4);
+
+unsigned long pc_display = 0;
 
 void setup(void) {
    Serial.begin(9600);
@@ -25,33 +27,7 @@ void setup(void) {
    pinMode(LED_BUILTIN, OUTPUT);
    digitalWrite(LED_BUILTIN, LOW);
 
-   u8g2.begin();
-
-#ifdef LOGO
-   u8g2.clearBuffer();					// clear the internal memory
-   u8g2.setFont(u8g2_font_logisoso18_tr);  // choose a suitable font at https://github.com/olikraus/u8g2/wiki/fntlistall
-   u8g2.drawStr(8,29,"XD23FE39");	// write something to the internal memory
-   u8g2.sendBuffer();					// transfer internal memory to the display
-   delay(3000);
-
-   u8g2.clearBuffer();         // clear the internal memory
-   u8g2.setFont(u8g2_font_logisoso18_tr);  // choose a suitable font at https://github.com/olikraus/u8g2/wiki/fntlistall
-   u8g2.drawStr(4,29,"v.19.6.10");  // write something to the internal memory
-   u8g2.sendBuffer();         // transfer internal memory to the display
-   delay(2000);
-
-   u8g2.clearBuffer();         // clear the internal memory
-   u8g2.setFont(u8g2_font_logisoso18_tr);  // choose a suitable font at https://github.com/olikraus/u8g2/wiki/fntlistall
-   u8g2.drawStr(4,26,"PIR");  // write something to the internal memory
-   u8g2.sendBuffer();         // transfer internal memory to the display
-   delay(2000);
-
-   u8g2.clearBuffer();         // clear the internal memory
-   u8g2.setFont(u8g2_font_logisoso18_tr);  // choose a suitable font at https://github.com/olikraus/u8g2/wiki/fntlistall
-   u8g2.drawStr(4,26,"ready!");  // write something to the internal memory
-   u8g2.sendBuffer();         // transfer internal memory to the display
-   delay(2000);
-#endif
+  oled_setup();
 }
 
 char pir_display[25];
@@ -60,6 +36,7 @@ void loop(void) {
 
   switch ( pir.detect() ) {
     case 2: // Motion
+      pc_display = 0;
       u8g2.clearBuffer();         // clear the internal memory
       u8g2.setFont(u8g2_font_logisoso18_tr);  // choose a suitable font at https://github.com/olikraus/u8g2/wiki/fntlistall
       u8g2.drawStr(4,26,"MOTION!");  // write something to the internal memory
@@ -67,24 +44,32 @@ void loop(void) {
       delay(2000);
       break;
     case 1: // Unlock
+      pc_display = 0;
       sprintf(pir_display, "T: %ld ms", (unsigned long) pir.getLockTimer());
       u8g2.clearBuffer();         // clear the internal memory
       u8g2.setFont(u8g2_font_7x14_tr);  // choose a suitable font at https://github.com/olikraus/u8g2/wiki/fntlistall
-      u8g2.drawStr(6,16,"UNLOCK");  // write something to the internal memory
-      u8g2.drawStr(6,30,pir_display);  // write something to the internal memory
+      u8g2.drawStr(4,16,"UNLOCK");  // write something to the internal memory
+      u8g2.drawStr(4,30,pir_display);  // write something to the internal memory
       u8g2.sendBuffer();         // transfer internal memory to the display
       delay(4000);
       digitalWrite(LED_BUILTIN, LOW);
       break;
     default: // Nothing changed
-      sprintf(pir_display, "Alerts: %d", pir.getAlerts());
-      u8g2.clearBuffer();         // clear the internal memory
-      u8g2.setFont(u8g2_font_logisoso16_tr);  // choose a suitable font at https://github.com/olikraus/u8g2/wiki/fntlistall
-      u8g2.drawStr(6,26,pir_display);  // write something to the internal memory
-      u8g2.sendBuffer();         // transfer internal memory to the display
+      if (pc_display < 300) { 
+        pc_display++;
+        sprintf(pir_display, "Alerts: %d", pir.getAlerts());
+        u8g2.clearBuffer();         // clear the internal memory
+        u8g2.setFont(u8g2_font_logisoso16_tr);  // choose a suitable font at https://github.com/olikraus/u8g2/wiki/fntlistall
+        u8g2.drawStr(4,26,pir_display);  // write something to the internal memory
+        u8g2.sendBuffer();         // transfer internal memory to the display
+      } else {
+        pc_display = 500;
+        u8g2.clearBuffer();         // clear the internal memory
+        u8g2.sendBuffer();         // transfer internal memory to the display
+      }
+      
       break;
   }
 
-   delay(100);
-
+   delay(10);
 }
