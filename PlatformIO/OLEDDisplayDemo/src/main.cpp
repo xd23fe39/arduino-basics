@@ -4,7 +4,9 @@ OLED 0,91" Display Demo Timer
 Beispiel zeigt die Nutzung des OLED-Displays anhand eines Millisekunden-Zählers. 
 
 PIN Layout:
-                        Nano  UNO
+
+   PIN   Beschreibung   Nano  UNO
+   -------------------------------
    GND   Power Ground   GND   GND
    VCC   3.3V (5V)      3.3   3.3
    SCL   I2C Clock      A5    SCL
