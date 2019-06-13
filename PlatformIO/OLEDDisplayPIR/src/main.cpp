@@ -4,8 +4,6 @@
 #include <SPI.h>
 #include <Wire.h>
 
-#define LOGO "ON"
-
 #include "PIRMotionSensor.h"
 #include "OLEDText.h"
 

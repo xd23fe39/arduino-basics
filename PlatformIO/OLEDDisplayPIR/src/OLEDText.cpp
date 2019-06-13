@@ -16,6 +16,8 @@
 #include <Wire.h>
 #include "OLEDText.h"
 
+#define LOGO "ON"
+
 U8G2_SSD1306_128X32_UNIVISION_F_HW_I2C u8g2(U8G2_R0); 
 
 void oled_setup() { 
