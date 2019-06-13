@@ -1,6 +1,15 @@
-/**
- * OLEDText Modul
- * 
+/*
+   OLEDText Modul
+  
+   PIN Layout:
+
+   PIN   Beschreibung   Nano  UNO
+   -------------------------------
+   GND   Power Ground   GND   GND
+   VCC   3.3V (5V)      3.3   3.3
+   SCL   I2C Clock      A5    SCL
+   SDA   I2C Data       A4    SDA
+ 
  */
 #include <U8g2lib.h>
 #include <SPI.h>

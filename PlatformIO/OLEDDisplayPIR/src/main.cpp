@@ -1,11 +1,13 @@
+
 #include <Arduino.h>
 #include <U8g2lib.h>
 #include <SPI.h>
 #include <Wire.h>
-#include "PIRMotionSensor.h"
-#include "OLEDText.h"
 
 #define LOGO "ON"
+
+#include "PIRMotionSensor.h"
+#include "OLEDText.h"
 
 extern U8G2_SSD1306_128X32_UNIVISION_F_HW_I2C u8g2;
 
