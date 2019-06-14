@@ -8,7 +8,7 @@
 // PIR Motion Sensor Helper Class
 PIRMotionSensor_C pir(PIN4);
 
-unsigned long clk_loop = 0;
+unsigned long timer_blink = 0;
 
 void setup() {
   Serial.begin(9600);
@@ -58,17 +58,18 @@ void loop() {
       }
       break;
   }
-  // Wartezeit wurde mit 2 Sekunden hier relativ lange eingestellt 
+
   // alle 2 Sekunden blinkt die LED sehr kurz auf => ALIVE
-  // auch die detect() Ereignisse werden nur alle 2s abgerufen
-  if (clk_loop == 2000) { 
-    clk_loop = 0;
+  if (timer_blink == 2000) { 
+    timer_blink = 0;
     digitalWrite(LED_BUILTIN, HIGH);
     delay(20);
     digitalWrite(LED_BUILTIN, LOW);
     delay(20);
   }
 
+  // Aufgrund der kurzen delay-Zeiten reagiert das Programm sehr schnell
+  // auf Veränderungen.
   delay(1);
-  clk_loop++;
+  timer_blink++;
 }
