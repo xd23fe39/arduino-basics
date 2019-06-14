@@ -31,7 +31,8 @@ public:
   int detect();
   void reset();
   bool locked();
-  unsigned long getLockTimer();
+  unsigned long getTimer();
+  unsigned long getTimerStop();
   int getAlerts();
   int readSignal();
 };

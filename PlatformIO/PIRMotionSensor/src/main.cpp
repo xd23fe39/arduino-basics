@@ -14,37 +14,47 @@ void setup() {
   pir.setup();
 }
 
+void dump_serial(PIRMotionSensor_C p, String text) {
+  char buffer[12];
+  sprintf(buffer, "%.11ld", p.getTimer());
+  Serial.print("TIME: ");
+  Serial.print(buffer);
+  sprintf(buffer, "%.6ld", p.getTimerStop());
+  Serial.print(" WAIT: ");
+  Serial.print(buffer);
+  Serial.print(" COUNT: ");
+  Serial.print(p.getAlerts());
+  Serial.print(" SIGN: ");
+  Serial.print(p.readSignal());
+  Serial.print(" DESC: ");
+  Serial.print(text);
+  Serial.println();  
+}
+
 void loop() {
   
   // Read Signal PIN (for demo only)
   int sig = pir.readSignal();
   
-  // Serial Monitor
-  Serial.print(" CNT: ");
-  Serial.print(pir.getAlerts());
-  Serial.print(" SIG: ");
-  Serial.print(sig);
-
   // PIR motion detection (if SIG is changed, than ...)
   switch ( pir.detect() ) {
     case 2: // Motion
-      Serial.print(" DESC: ");
-      Serial.print("MOTION");
-      break;
+      dump_serial(pir, "MOTION ALERT");
+    break;
     case 1: // Unlock
-      Serial.print(" DESC: ");
-      Serial.print("UNLOCK");
-      Serial.print(" TIMER ");
-      Serial.print(pir.getLockTimer());
+      dump_serial(pir, "UNLOCK");
       break;
     default: // Nothing changed
-      Serial.print(" DESC: ");
-      Serial.print("---");
-      Serial.print((char) ( 63+rand() % 26) );
-      Serial.print("---");
+      if (pir.locked()) {
+        dump_serial(pir, "LOCKED");
+      }
+      while (pir.locked()) {
+        digitalWrite(LED_BUILTIN, HIGH);
+        delay(200);
+        digitalWrite(LED_BUILTIN, LOW);
+        delay(200);
+      }
       break;
   }
-
-  Serial.println();
   delay(500);
 }
