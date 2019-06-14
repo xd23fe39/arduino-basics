@@ -12,8 +12,8 @@ unsigned long timer_blink = 0;
 
 void setup() {
   Serial.begin(9600);
-  Serial.println("\nP-I-R Modul. SIGNAL and TIMER adjustment.\n");
-  Serial.println("\nP-I-R is ready....\n");
+  Serial.println("\nP-I-R Modul. SIGNAL and TIMER adjustment.");
+  Serial.println("P-I-R Modul is ready....\n");
   pir.setup();
 }
 
