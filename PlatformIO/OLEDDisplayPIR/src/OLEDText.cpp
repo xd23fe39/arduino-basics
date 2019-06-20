@@ -33,7 +33,7 @@ void oled_setup() {
 
    u8g2.clearBuffer();         // clear the internal memory
    u8g2.setFont(u8g2_font_logisoso18_tr);  // choose a suitable font at https://github.com/olikraus/u8g2/wiki/fntlistall
-   u8g2.drawStr(4,29,"v.19.6.11");  // write something to the internal memory
+   u8g2.drawStr(4,29,"v.19.6.12");  // write something to the internal memory
    u8g2.sendBuffer();         // transfer internal memory to the display
    delay(2000);
 

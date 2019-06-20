@@ -30,7 +30,7 @@ public:
   void setup();
   int detect();
   void reset();
-  bool locked();
+  bool locked(bool reset = false);
   unsigned long getLockTimer();
   int getAlerts();
   int readSignal();

@@ -9,6 +9,9 @@
 
 extern U8G2_SSD1306_128X32_UNIVISION_F_HW_I2C u8g2;
 
+void relais_switch(uint8_t pin, int level);
+void relais_init(uint8_t pin, bool low_level_trigger);
+
 /*
 
 https://www.instructables.com/id/Tutorial-to-Interface-OLED-091inch-128x32-With-Ard/
@@ -21,13 +24,21 @@ PIRMotionSensor_C pir(PIN4);
 unsigned long pc_display = 0;
 
 void setup(void) {
-   Serial.begin(9600);
-   pir.setup();
 
-   pinMode(LED_BUILTIN, OUTPUT);
-   digitalWrite(LED_BUILTIN, LOW);
+  // Initialisierung
+  Serial.begin(9600);    // Serial Monitor
+  pir.setup();           // PIR
+  oled_setup();          // OLED Display (I2C Schnittstelle)
+  relais_init(5, true);
 
-  oled_setup();
+  while (pir.locked()) {
+    // Eingebaute LED soll blinken, solange PIR gelockt ist
+    digitalWrite(LED_BUILTIN, HIGH);
+    delay(200);
+    digitalWrite(LED_BUILTIN, LOW);
+    delay(200);
+  }
+
 }
 
 char pir_display[25];
@@ -41,6 +52,7 @@ void loop(void) {
       u8g2.setFont(u8g2_font_logisoso18_tr);  // choose a suitable font at https://github.com/olikraus/u8g2/wiki/fntlistall
       u8g2.drawStr(4,26,"MOTION!");  // write something to the internal memory
       u8g2.sendBuffer();         // transfer internal memory to the display
+      relais_switch(5, LOW);
       delay(2000);
       break;
     case 1: // Unlock
@@ -52,24 +64,51 @@ void loop(void) {
       u8g2.drawStr(4,30,pir_display);  // write something to the internal memory
       u8g2.sendBuffer();         // transfer internal memory to the display
       delay(4000);
-      digitalWrite(LED_BUILTIN, LOW);
+      relais_switch(5, HIGH);
+      u8g2.clearBuffer();         // clear the internal memory
+      u8g2.sendBuffer();         // transfer internal memory to the display      
       break;
     default: // Nothing changed
-      if (pc_display < 300) { 
-        pc_display++;
+      if (pir.locked() && pc_display != 2) { 
+        pc_display = 2;
         sprintf(pir_display, "Alerts: %d", pir.getAlerts());
         u8g2.clearBuffer();         // clear the internal memory
         u8g2.setFont(u8g2_font_logisoso16_tr);  // choose a suitable font at https://github.com/olikraus/u8g2/wiki/fntlistall
         u8g2.drawStr(4,26,pir_display);  // write something to the internal memory
         u8g2.sendBuffer();         // transfer internal memory to the display
-      } else {
-        pc_display = 500;
-        u8g2.clearBuffer();         // clear the internal memory
-        u8g2.sendBuffer();         // transfer internal memory to the display
       }
-      
       break;
   }
 
    delay(10);
+}
+
+
+
+/**
+ * Initialisierung des Relais. Es werden HIGH- und LOW-Level-Trigger
+ * Relaismodule unterstützt. 
+ */
+void relais_init(uint8_t pin, bool low_level_trigger)
+{
+  // Anschluss-PIN als Ausgang setzen
+  pinMode(pin, OUTPUT);
+  
+  // Low-Level-Trigger Module schalten beim Wechsel nach LOW 
+  if (low_level_trigger)
+  {
+    relais_switch(pin, HIGH);    // AUS
+  }
+  else
+  {
+    relais_switch(pin, LOW);     // AUS
+  }  
+}
+
+/**
+ * Schaltet das Relaimodul an PIN pin auf LEVEL level.
+ */
+void relais_switch(uint8_t pin, int level)  
+{
+  digitalWrite(pin, level);
 }

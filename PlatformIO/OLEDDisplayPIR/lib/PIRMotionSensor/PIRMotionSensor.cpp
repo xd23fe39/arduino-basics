@@ -30,9 +30,15 @@ int PIRMotionSensor_C::detect() {
   return 0;  
 }
 
-bool PIRMotionSensor_C::locked() {
+bool PIRMotionSensor_C::locked(bool reset = false) {
   int in = readSignal();
-  return (in == PIR_ALERT_SIGNAL);
+  bool lock = (this->value == MOTION_ALERT && in == PIR_ALERT_SIGNAL);
+  if (!lock && reset) {
+    this->value = MOTION_SLEEP;
+    this->lc_stop = millis();
+    this->lc_timer = lc_stop - lc_start;
+  }
+  return lock;
 }
 
 unsigned long PIRMotionSensor_C::getLockTimer() {
@@ -52,12 +58,6 @@ void PIRMotionSensor_C::reset()  {
   this->lc_start = 0;
   this->lc_stop = 0;
 }
-
-/*
-
-Protected methods
-
-*/
 
 int PIRMotionSensor_C::readSignal()  {
   return digitalRead(this->PIN_SIG);
