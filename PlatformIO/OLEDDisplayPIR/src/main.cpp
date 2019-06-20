@@ -84,7 +84,6 @@ void loop(void) {
 }
 
 
-
 /**
  * Initialisierung des Relais. Es werden HIGH- und LOW-Level-Trigger
  * Relaismodule unterstützt. 

@@ -68,16 +68,16 @@ void blink(uint8_t pin, byte repeat, int ms = 200) {
 void relais_init(uint8_t pin, bool low_level_trigger)
 {
   // Anschluss-PIN als Ausgang setzen
-  pinMode(PIN_RELAIS_A, OUTPUT);
+  pinMode(pin, OUTPUT);
   
   // Low-Level-Trigger Module schalten beim Wechsel nach LOW 
   if (low_level_trigger)
   {
-    relais_switch(PIN_RELAIS_A, HIGH);    // AUS
+    relais_switch(pin, HIGH);    // AUS
   }
   else
   {
-    relais_switch(PIN_RELAIS_A, LOW);     // AUS
+    relais_switch(pin, LOW);     // AUS
   }  
 }
 
