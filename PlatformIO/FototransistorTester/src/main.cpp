@@ -11,10 +11,25 @@ struct PhotoTester {
   unsigned long count = 0;
 };
 
+struct SignalLED {
+  uint8_t pin = 7;
+  int level = LOW;
+  int delay = 200;
+};
+
+struct BusinessLogic {
+  int alerts = 0;
+  int sensibility = 8;
+};
+
 PhotoTester test;
+SignalLED led;
+BusinessLogic blogic;
 
 // Funktionsdefinitionen
 int read();
+int logic();
+void blink(int n);
 void dump();
 
 /**
@@ -24,6 +39,9 @@ void setup() {
   // Serial Monitor initialisieren
   Serial.begin(9600);
   Serial.println(test.name);
+  // LED
+  pinMode(led.pin, OUTPUT);
+  digitalWrite(led.pin, led.level);
   // Initialisiere Datenstruktur
   test.value = analogRead(test.pin);
 }
@@ -36,6 +54,8 @@ void loop() {
   read();
   // Ausgabe der Sensorwerte
   dump();
+  // Verarbeitung der Werte (Logik)
+  logic();
   // Warte 2 Sekunden
   delay(2000);
 }
@@ -53,11 +73,17 @@ int read() {
   return test.value;
 }
 
+int logic() {
+  if (abs(test.delta) > blogic.sensibility) {
+    blogic.alerts++;
+    blink(3);
+  }
+}
+
 /**
  * Serial Dump 
  */
 void dump() {
-  char buffer[10];
   Serial.print("Photo: Messung ");
   Serial.print(test.count);
   Serial.print(" Value ");
@@ -66,7 +92,19 @@ void dump() {
   Serial.print(test.delta);
   Serial.print(" Level ");
   Serial.print(test.level);
+  Serial.print(" BL.alerts ");
+  Serial.print(blogic.alerts);
   Serial.print(" DayNight ");
   Serial.print(test.daynight);
   Serial.println();
+}
+
+void blink(int n) {
+  for (int i = 0; i < n; i++)
+  {
+    digitalWrite(led.pin, HIGH);
+    delay(led.delay);
+    digitalWrite(led.pin, LOW);
+    delay(led.delay);
+  }
 }
