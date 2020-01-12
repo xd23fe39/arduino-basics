@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <RCSwitch.h>
 
 struct PhotoTester {
   String name = "Fotowiderstand an 3kOhm Arbeitswiderstand";
@@ -25,11 +26,13 @@ struct BusinessLogic {
 PhotoTester test;
 SignalLED led;
 BusinessLogic blogic;
+RCSwitch rcsend = RCSwitch();
 
 // Funktionsdefinitionen
 int read();
 int logic();
 void blink(int n);
+void sendRC433();
 void dump();
 
 /**
@@ -42,7 +45,12 @@ void setup() {
   // LED
   pinMode(led.pin, OUTPUT);
   digitalWrite(led.pin, led.level);
-  // Initialisiere Datenstruktur
+  // RCSwitch
+  pinMode(10,OUTPUT);
+  rcsend.enableTransmit(10);
+  rcsend.setProtocol(1);
+  rcsend.setPulseLength(362);
+  rcsend.setRepeatTransmit(5);  // Initialisiere Datenstruktur
   test.value = analogRead(test.pin);
 }
 
@@ -77,6 +85,7 @@ int logic() {
   if (abs(test.delta) > blogic.sensibility) {
     blogic.alerts++;
     blink(3);
+    sendRC433();
   }
 }
 
@@ -107,4 +116,11 @@ void blink(int n) {
     digitalWrite(led.pin, LOW);
     delay(led.delay);
   }
+}
+
+void sendRC433() {
+    rcsend.send("010100000100010101010001");     // A_ON
+    delay(5000);
+    rcsend.send("010100000100010101010100");     // A_OFF
+    delay(10000);
 }
