@@ -1,0 +1,25 @@
+{
+	"folders": [
+		{
+			"path": "/home/frank/Sandbox/github.com/xd23fe39/arduino-basics/PlatformIO/OLEDDisplayPIR"
+		},
+		{
+			"name": "RelaisDemoV1",
+			"path": "/home/frank/Sandbox/github.com/xd23fe39/arduino-basics/PlatformIO/RelaisDemoV1"
+		},
+		{
+			"name": "MFRC522Demo",
+			"path": "/home/frank/Sandbox/github.com/xd23fe39/arduino-basics/PlatformIO/MFRC522Demo"
+		},
+		{
+			"name": "MFRC522Tester",
+			"path": "/home/frank/Sandbox/github.com/xd23fe39/arduino-basics/PlatformIO/MFRC522Tester"
+		}
+	],
+	"settings": {
+		"terminal.integrated.env.linux": {
+			"PATH": "/home/frank/.platformio/penv/bin:/home/frank/.platformio/penv:/home/frank/bin:/home/frank/.local/bin:/home/frank/bin:/home/frank/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games",
+			"PLATFORMIO_CALLER": "vscode"
+		}
+	}
+}

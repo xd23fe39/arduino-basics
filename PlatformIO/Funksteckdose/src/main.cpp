@@ -21,6 +21,12 @@ struct AnalogSensor {
   int delta;
 };
 
+struct PIRSensor_t {
+  uint8_t pin = 4;
+  int alert = LOW;
+  unsigned long count = 0;
+};
+
 class RCModul {
 
 protected:
@@ -29,6 +35,7 @@ protected:
   RCSwitch rcsender = RCSwitch();
   SignalLED signalLED = SignalLED(PIN4);
   AnalogSensor sensor;
+  PIRSensor_t pir;
 
   unsigned long rcvalue;
   unsigned int rcbitlen;
@@ -46,6 +53,27 @@ public:
   static const int TRANSMITTER_PIN = 10;     // Default: PIN for Transmitter Data
   static const int TRANSMITTER_VCC = PIN7;   // Default: Transmitter Standby and VCC
   static const int SENSOR_PIN = PIN_A0;      // Default: Analog sensor
+
+  void setupPIR() {
+    pinMode(pir.pin, INPUT);
+    pir.alert = digitalRead(pir.pin);
+  }
+
+  int readPIR() {
+    pir.alert = digitalRead(pir.pin);
+    if (pir.alert == HIGH) pir.count++;
+    return pir.alert;
+  }
+
+  void dumpPIR() {
+    if (Serial) {
+    Serial.print("\nPIR ALERT detect: ");
+    Serial.print(pir.alert);
+    Serial.print(" count ");
+    Serial.print(pir.count);
+    Serial.println();
+    }
+  }
 
   void setupTransmitter(uint8_t pin) {
     pinMode(TRANSMITTER_VCC, OUTPUT); 
@@ -82,6 +110,7 @@ public:
     setupSensor(SENSOR_PIN);
     setupTransmitter(TRANSMITTER_PIN);
     setupReceiver(RECEIVER_INT);
+    setupPIR();
     signalLED.start();
   }
 
@@ -105,6 +134,7 @@ public:
   }
 
   int readSensor() {
+    readPIR();
     sensor.value = analogRead(SENSOR_PIN);
     return sensor.value;
   }
@@ -119,6 +149,8 @@ public:
       Serial.print(sensor.value);
       Serial.print(", Delta ");
       Serial.print(sensor.delta);
+      Serial.print(" PIR ");
+      Serial.print(pir.alert);
       Serial.print(", Timer ");
       Serial.println(rc_timer);
       return true;
@@ -196,6 +228,7 @@ void setup() {
 void loop() {  
   rcmodul.loop();
   rcmodul.readSensor();
+  rcmodul.dumpPIR();
   if (rcmodul.wait(10000) && rcmodul.releaseSensor()) {
     if (rcmodul.getSensorValue() < 256) {
       rcmodul.sendData("010100000100010101010100");     // A_OFF
